@@ -15,9 +15,9 @@ struct ContentView: View {
         CreditCard {
             Group {
                 if flipped {
-                    CreditCardFront()
-                } else {
                     CreditCardBack()
+                } else {
+                    CreditCardFront()
                 }
             }
         }.rotation3DEffect(
