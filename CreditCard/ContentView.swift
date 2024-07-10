@@ -10,14 +10,18 @@ import SwiftUI
 struct ContentView: View {
     @State private var degree: Double = 0
     @State private var flipped: Bool = false
+
+    @State private var name: String = ""
+    @State private var expires: String = ""
+    @State private var cvv: String = ""
     
     var body: some View {
         CreditCard {
             Group {
                 if flipped {
-                    CreditCardBack()
+                    CreditCardBack(cvv: cvv)
                 } else {
-                    CreditCardFront()
+                    CreditCardFront(name: name, expire: expires)
                 }
             }
         }.rotation3DEffect(
@@ -29,6 +33,38 @@ struct ContentView: View {
                 flipped.toggle()
             }
         }
+        
+        TextField(text: $name) {
+            Text("Name")
+        }.textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding([.top, .leading, .trailing])
+        
+        TextField(text: $expires) {
+            Text("Expiration")
+        }.textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding([.top, .leading, .trailing])
+        
+        TextField("CVV", text: $cvv.max(3)) { editingChanged in
+            withAnimation {
+                degree += 180
+                flipped.toggle()
+            }
+        }onCommit: {
+        }.textFieldStyle(RoundedBorderTextFieldStyle())
+            .padding([.leading, .trailing])
+        
+        
+    }
+}
+
+extension Binding where Value == String {
+    func max(_ limit: Int) -> Self {
+        if self.wrappedValue.count > limit {
+            DispatchQueue.main.async {
+                self.wrappedValue = String(self.wrappedValue.prefix(limit))
+            }
+        }
+        return self
     }
 }
 
